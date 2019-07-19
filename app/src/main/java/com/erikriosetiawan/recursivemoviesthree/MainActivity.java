@@ -11,6 +11,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.annotation.NonNull;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import com.erikriosetiawan.recursivemoviesthree.fragments.MoviesFragment;
 import com.erikriosetiawan.recursivemoviesthree.fragments.TvShowsFragment;
@@ -45,6 +46,10 @@ public class MainActivity extends AppCompatActivity {
                     fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
                     fragmentTransaction.commit();
                     setActionBarTitle(getResources().getString(R.string.nav_tv_shows));
+                    return true;
+
+                case R.id.navigation_favorite:
+                    Toast.makeText(getApplicationContext(), "Favorite item clicked", Toast.LENGTH_SHORT).show();
                     return true;
             }
             return false;
