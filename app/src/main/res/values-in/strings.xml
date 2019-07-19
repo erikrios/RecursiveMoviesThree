@@ -7,6 +7,5 @@
     <string name="progress_title">Memuat</string>
 
     <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Halo fragment Kosong</string>
     <string name="change_language_settings">Ubah Pengaturan Bahasa</string>
 </resources>

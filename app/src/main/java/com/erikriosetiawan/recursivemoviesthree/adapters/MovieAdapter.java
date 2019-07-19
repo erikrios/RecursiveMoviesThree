@@ -53,6 +53,7 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.ViewHolder> 
     @Override
     public void onBindViewHolder(@NonNull MovieAdapter.ViewHolder viewHolder, int i) {
         viewHolder.tvMovieTitle.setText(getMovies().get(i).getTitle());
+        viewHolder.tvVoteAverage.setText(String.valueOf(getMovies().get(i).getVoteAverage()));
         Picasso.get()
                 .load("https://image.tmdb.org/t/p/w185" + getMovies().get(i).getPosterPath())
                 .into(viewHolder.imgMoviePoster);
@@ -76,11 +77,12 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.ViewHolder> 
 
     class ViewHolder extends RecyclerView.ViewHolder {
 
-        TextView tvMovieTitle;
+        TextView tvMovieTitle, tvVoteAverage;
         ImageView imgMoviePoster;
         ViewHolder(@NonNull View itemView) {
             super(itemView);
             tvMovieTitle = itemView.findViewById(R.id.tv_list_title_movie);
+            tvVoteAverage = itemView.findViewById(R.id.tv_list_vote_average_movie);
             imgMoviePoster = itemView.findViewById(R.id.img_list_poster_movie);
         }
     }

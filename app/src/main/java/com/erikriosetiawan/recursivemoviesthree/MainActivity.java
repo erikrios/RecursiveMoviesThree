@@ -18,7 +18,6 @@ import com.erikriosetiawan.recursivemoviesthree.fragments.TvShowsFragment;
 public class MainActivity extends AppCompatActivity {
 
 
-
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
 

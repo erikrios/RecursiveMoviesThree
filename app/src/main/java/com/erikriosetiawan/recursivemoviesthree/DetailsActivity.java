@@ -4,6 +4,7 @@ import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -19,7 +20,9 @@ public class DetailsActivity extends AppCompatActivity {
 
     private ImageView imgPoster;
     private TextView tvTitle;
-    private TextView tvReleaseDate;
+    private Button btnReleaseDate;
+    private Button btnVoteCount;
+    private Button btnVoteAverage;
     private TextView tvOverview;
     private ProgressDialog progressDialog;
 
@@ -32,7 +35,9 @@ public class DetailsActivity extends AppCompatActivity {
 
         imgPoster = findViewById(R.id.img_detail_poster);
         tvTitle = findViewById(R.id.tv_detail_title);
-        tvReleaseDate = findViewById(R.id.tv_detail_release_date);
+        btnReleaseDate = findViewById(R.id.btn_detail_release_date);
+        btnVoteCount = findViewById(R.id.btn_detail_vote_count);
+        btnVoteAverage = findViewById(R.id.btn_detail_vote_average);
         tvOverview = findViewById(R.id.tv_detail_overview);
         progressDialog = new ProgressDialog(DetailsActivity.this);
     }
@@ -53,7 +58,9 @@ public class DetailsActivity extends AppCompatActivity {
                         .load("https://image.tmdb.org/t/p/w185" + movie.getPosterPath())
                         .into(imgPoster);
                 tvTitle.setText(movie.getTitle());
-                tvReleaseDate.setText(movie.getReleaseDate());
+                btnReleaseDate.setText(movie.getReleaseDate());
+                btnVoteCount.setText(String.valueOf(movie.getVoteCount()));
+                btnVoteAverage.setText(String.valueOf(movie.getVoteAverage()));
                 tvOverview.setText(movie.getOverview());
                 setActionBar(tvTitle.getText().toString());
                 break;
@@ -64,7 +71,9 @@ public class DetailsActivity extends AppCompatActivity {
                         .load("https://image.tmdb.org/t/p/w185" + tvShow.getPosterPath())
                         .into(imgPoster);
                 tvTitle.setText(tvShow.getName());
-                tvReleaseDate.setText(tvShow.getFirstAirDate());
+                btnReleaseDate.setText(tvShow.getFirstAirDate());
+                btnVoteCount.setText(String.valueOf(tvShow.getVoteCount()));
+                btnVoteAverage.setText(String.valueOf(tvShow.getVoteAverage()));
                 tvOverview.setText(tvShow.getOverview());
                 setActionBar(tvTitle.getText().toString());
                 break;
