@@ -81,7 +81,7 @@ public class DetailsActivity extends AppCompatActivity {
 
                 SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
                 final SharedPreferences.Editor editor = preferences.edit();
-                if (preferences.contains("checked") && preferences.getBoolean("checked", false) == true) {
+                if (preferences.contains("checked") && preferences.getBoolean("checked", false)) {
                     btnFavorite.setFavorite(true);
                 } else {
                     btnFavorite.setFavorite(false);
