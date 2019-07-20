@@ -96,7 +96,7 @@ public class DetailsActivity extends AppCompatActivity {
                             String title = tvTitle.getText().toString();
                             String releaseDate = btnReleaseDate.getText().toString();
                             String overview = tvOverview.getText().toString();
-                            saveFavoriteMovies(title, releaseDate, "https://image.tmdb.org/t/p/w185" + posterPath, overview);
+                            saveFavoriteMovies(title, releaseDate, posterPath, overview);
                             Snackbar.make(buttonView, "Added to Favorite", Snackbar.LENGTH_SHORT).show();
                         } else {
                             favoriteMoviesDatabaseHelper = new FavoriteMoviesDatabaseHelper(DetailsActivity.this);

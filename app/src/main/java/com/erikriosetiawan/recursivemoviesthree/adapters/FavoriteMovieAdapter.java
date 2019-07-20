@@ -11,6 +11,7 @@ import android.widget.TextView;
 
 import com.erikriosetiawan.recursivemoviesthree.R;
 import com.erikriosetiawan.recursivemoviesthree.models.Movie;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
@@ -49,7 +50,13 @@ public class FavoriteMovieAdapter extends RecyclerView.Adapter<FavoriteMovieAdap
 
     @Override
     public void onBindViewHolder(@NonNull FavoriteMovieAdapter.ViewHolder viewHolder, int i) {
+        viewHolder.tvMovieTitle.setText(getMovies().get(i).getTitle());
+        viewHolder.tvReleaseDate.setText(getMovies().get(i).getReleaseDate());
+        viewHolder.tvOverview.setText(getMovies().get(i).getOverview());
 
+        Picasso.get()
+                .load("https://image.tmdb.org/t/p/w185" + getMovies().get(i).getPosterPath())
+                .into(viewHolder.imgViewPoster);
     }
 
     @Override
