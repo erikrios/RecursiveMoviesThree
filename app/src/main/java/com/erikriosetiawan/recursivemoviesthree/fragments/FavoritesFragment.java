@@ -66,7 +66,7 @@ public class FavoritesFragment extends Fragment {
 
         @Override
         public Fragment getItem(int i) {
-            return (i  == 0)? new FavoriteMoviesFragment() : new FavoriteTvShowsFragment();
+            return (i == 0)? new FavoriteMoviesFragment() : new FavoriteTvShowsFragment();
         }
 
 
