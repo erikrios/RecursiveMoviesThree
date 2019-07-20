@@ -8,6 +8,7 @@ import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -52,7 +53,7 @@ public class FavoritesFragment extends Fragment {
         tabs.setViewPager(viewPager);
     }
 
-    private class ViewPagerAdapter extends FragmentPagerAdapter {
+    private class ViewPagerAdapter extends FragmentStatePagerAdapter {
 
         public ViewPagerAdapter(FragmentManager fm) {
             super(fm);
@@ -66,7 +67,7 @@ public class FavoritesFragment extends Fragment {
 
         @Override
         public Fragment getItem(int i) {
-            return (i == 0)? new FavoriteMoviesFragment() : new FavoriteTvShowsFragment();
+            return (i == 0) ? new FavoriteMoviesFragment() : new FavoriteTvShowsFragment();
         }
 
 
