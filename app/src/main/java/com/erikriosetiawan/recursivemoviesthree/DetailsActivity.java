@@ -11,8 +11,8 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.erikriosetiawan.recursivemoviesthree.db.FavoriteDatabaseContract;
 import com.erikriosetiawan.recursivemoviesthree.db.FavoriteMoviesDatabaseHelper;
+import com.erikriosetiawan.recursivemoviesthree.db.FavoriteTvShowsDatabaseHelper;
 import com.erikriosetiawan.recursivemoviesthree.models.Movie;
 import com.erikriosetiawan.recursivemoviesthree.models.TvShow;
 import com.github.ivbaranov.mfb.MaterialFavoriteButton;
@@ -36,11 +36,13 @@ public class DetailsActivity extends AppCompatActivity {
     int progressStatus;
 
     private FavoriteMoviesDatabaseHelper favoriteMoviesDatabaseHelper;
+    private FavoriteTvShowsDatabaseHelper favoriteTvShowsDatabaseHelper;
     private Movie favoriteMovie;
+    private TvShow favoriteTvShow;
     private final AppCompatActivity activity = DetailsActivity.this;
 
     private String title, releaseDate, overview, posterPath;
-    private int movieId;
+    private int id;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,12 +70,12 @@ public class DetailsActivity extends AppCompatActivity {
         switch (key) {
 
             case MOVIE_KEY:
-                Movie movie = getIntent().getParcelableExtra(MOVIE_KEY);
+                final Movie movie = getIntent().getParcelableExtra(MOVIE_KEY);
                 title = movie.getTitle();
                 overview = movie.getOverview();
                 releaseDate = movie.getReleaseDate();
                 posterPath = movie.getPosterPath();
-                movieId = movie.getId();
+                id = movie.getId();
                 Picasso.get()
                         .load("https://image.tmdb.org/t/p/w185" + posterPath)
                         .into(imgPoster);
@@ -84,9 +86,9 @@ public class DetailsActivity extends AppCompatActivity {
                 tvOverview.setText(overview);
                 setActionBar(tvTitle.getText().toString());
 
-                SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
-                final SharedPreferences.Editor editor = preferences.edit();
-                if (preferences.contains("checked") && preferences.getBoolean("checked", false)) {
+                SharedPreferences moviesPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+                final SharedPreferences.Editor moviesEditor = moviesPreferences.edit();
+                if (moviesPreferences.contains("checked") && moviesPreferences.getBoolean("checked", false)) {
                     btnFavorite.setFavorite(true);
                 } else {
                     btnFavorite.setFavorite(false);
@@ -96,15 +98,15 @@ public class DetailsActivity extends AppCompatActivity {
                     @Override
                     public void onFavoriteChanged(MaterialFavoriteButton buttonView, boolean favorite) {
                         if (btnFavorite.isFavorite()) {
-                            editor.putBoolean("checked", true);
-                            editor.apply();
-                            saveFavoriteMovies(title, releaseDate, posterPath, overview, movieId);
+                            moviesEditor.putBoolean("checked", true);
+                            moviesEditor.apply();
+                            saveFavoriteMovies(title, releaseDate, posterPath, overview, id);
                             Snackbar.make(buttonView, "Added to Favorite", Snackbar.LENGTH_SHORT).show();
                         } else {
                             favoriteMoviesDatabaseHelper = new FavoriteMoviesDatabaseHelper(DetailsActivity.this);
-                            favoriteMoviesDatabaseHelper.deleteFavorite(movieId);
-                            editor.putBoolean("checked", false);
-                            editor.apply();
+                            favoriteMoviesDatabaseHelper.deleteFavorite(id);
+                            moviesEditor.putBoolean("checked", false);
+                            moviesEditor.apply();
                             Snackbar.make(buttonView, "Removed from Favorite", Snackbar.LENGTH_SHORT).show();
                         }
                     }
@@ -112,16 +114,47 @@ public class DetailsActivity extends AppCompatActivity {
                 break;
 
             case TV_SHOW_KEY:
-                TvShow tvShow = getIntent().getParcelableExtra(TV_SHOW_KEY);
+                final TvShow tvShow = getIntent().getParcelableExtra(TV_SHOW_KEY);
+                title = tvShow.getName();
+                overview = tvShow.getOverview();
+                releaseDate = tvShow.getFirstAirDate();
+                posterPath = tvShow.getPosterPath();
+                id = tvShow.getId();
                 Picasso.get()
                         .load("https://image.tmdb.org/t/p/w185" + tvShow.getPosterPath())
                         .into(imgPoster);
-                tvTitle.setText(tvShow.getName());
-                btnReleaseDate.setText(tvShow.getFirstAirDate());
+                tvTitle.setText(title);
+                btnReleaseDate.setText(releaseDate);
                 btnVoteCount.setText(String.valueOf(tvShow.getVoteCount()));
                 btnVoteAverage.setText(String.valueOf(tvShow.getVoteAverage()));
-                tvOverview.setText(tvShow.getOverview());
+                tvOverview.setText(overview);
                 setActionBar(tvTitle.getText().toString());
+
+                SharedPreferences tvShowsPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+                final SharedPreferences.Editor tvShowsEditor = tvShowsPreferences.edit();
+                if (tvShowsPreferences.contains("checked") && tvShowsPreferences.getBoolean("checked", false)) {
+                    btnFavorite.setFavorite(true);
+                } else {
+                    btnFavorite.setFavorite(false);
+                }
+
+                btnFavorite.setOnFavoriteChangeListener(new MaterialFavoriteButton.OnFavoriteChangeListener() {
+                    @Override
+                    public void onFavoriteChanged(MaterialFavoriteButton buttonView, boolean favorite) {
+                        if (btnFavorite.isFavorite()) {
+                            tvShowsEditor.putBoolean("Checked", true);
+                            tvShowsEditor.apply();
+                            saveFavoriteTvShows(title, releaseDate, posterPath, overview, id);
+                            Snackbar.make(buttonView, "Added to Favorite", Snackbar.LENGTH_SHORT).show();
+                        } else {
+                            favoriteTvShowsDatabaseHelper = new FavoriteTvShowsDatabaseHelper(DetailsActivity.this);
+                            favoriteTvShowsDatabaseHelper.deleteFavorite(id);
+                            tvShowsEditor.putBoolean("checked", false);
+                            tvShowsEditor.apply();
+                            Snackbar.make(buttonView, "Removed from Favorite", Snackbar.LENGTH_SHORT).show();
+                        }
+                    }
+                });
                 break;
         }
     }
@@ -183,6 +216,19 @@ public class DetailsActivity extends AppCompatActivity {
         favoriteMovie.setOverview(overview);
 
         favoriteMoviesDatabaseHelper.addFavorite(favoriteMovie);
+    }
+
+    private void saveFavoriteTvShows(String title, String releaseDate, String posterPath, String overview, int id) {
+        favoriteTvShowsDatabaseHelper = new FavoriteTvShowsDatabaseHelper(activity);
+        favoriteTvShow = new TvShow();
+
+        favoriteTvShow.setId(id);
+        favoriteTvShow.setName(title);
+        favoriteTvShow.setFirstAirDate(releaseDate);
+        favoriteTvShow.setPosterPath(posterPath);
+        favoriteTvShow.setOverview(overview);
+
+        favoriteTvShowsDatabaseHelper.addFavorite(favoriteTvShow);
     }
 
 
