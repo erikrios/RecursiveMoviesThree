@@ -51,7 +51,7 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.ViewHolder> 
     }
 
     @Override
-    public void onBindViewHolder(@NonNull MovieAdapter.ViewHolder viewHolder, int i) {
+    public void onBindViewHolder(@NonNull MovieAdapter.ViewHolder viewHolder, final int i) {
         viewHolder.tvMovieTitle.setText(getMovies().get(i).getTitle());
         viewHolder.tvVoteAverage.setText(String.valueOf(getMovies().get(i).getVoteAverage()));
         Picasso.get()

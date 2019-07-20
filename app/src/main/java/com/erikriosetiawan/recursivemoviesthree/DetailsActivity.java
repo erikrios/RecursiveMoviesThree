@@ -39,6 +39,9 @@ public class DetailsActivity extends AppCompatActivity {
     private Movie favoriteMovie;
     private final AppCompatActivity activity = DetailsActivity.this;
 
+    private String title, releaseDate, overview, posterPath;
+    private int movieId;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -52,7 +55,6 @@ public class DetailsActivity extends AppCompatActivity {
         tvOverview = findViewById(R.id.tv_detail_overview);
         progressDialog = new ProgressDialog(DetailsActivity.this);
         btnFavorite = findViewById(R.id.btn_favorite);
-
     }
 
     @Override
@@ -67,16 +69,19 @@ public class DetailsActivity extends AppCompatActivity {
 
             case MOVIE_KEY:
                 Movie movie = getIntent().getParcelableExtra(MOVIE_KEY);
-                final String posterPath = movie.getPosterPath();
-                final int movieId = movie.getId();
+                title = movie.getTitle();
+                overview = movie.getOverview();
+                releaseDate = movie.getReleaseDate();
+                posterPath = movie.getPosterPath();
+                movieId = movie.getId();
                 Picasso.get()
                         .load("https://image.tmdb.org/t/p/w185" + posterPath)
                         .into(imgPoster);
-                tvTitle.setText(movie.getTitle());
-                btnReleaseDate.setText(movie.getReleaseDate());
+                tvTitle.setText(title);
+                btnReleaseDate.setText(releaseDate);
                 btnVoteCount.setText(String.valueOf(movie.getVoteCount()));
                 btnVoteAverage.setText(String.valueOf(movie.getVoteAverage()));
-                tvOverview.setText(movie.getOverview());
+                tvOverview.setText(overview);
                 setActionBar(tvTitle.getText().toString());
 
                 SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
@@ -93,10 +98,7 @@ public class DetailsActivity extends AppCompatActivity {
                         if (btnFavorite.isFavorite()) {
                             editor.putBoolean("checked", true);
                             editor.apply();
-                            String title = tvTitle.getText().toString();
-                            String releaseDate = btnReleaseDate.getText().toString();
-                            String overview = tvOverview.getText().toString();
-                            saveFavoriteMovies(title, releaseDate, posterPath, overview);
+                            saveFavoriteMovies(title, releaseDate, posterPath, overview, movieId);
                             Snackbar.make(buttonView, "Added to Favorite", Snackbar.LENGTH_SHORT).show();
                         } else {
                             favoriteMoviesDatabaseHelper = new FavoriteMoviesDatabaseHelper(DetailsActivity.this);
@@ -170,10 +172,11 @@ public class DetailsActivity extends AppCompatActivity {
         run.start();
     }
 
-    private void saveFavoriteMovies(String title, String releaseDate, String posterPath, String overview) {
+    private void saveFavoriteMovies(String title, String releaseDate, String posterPath, String overview, int id) {
         favoriteMoviesDatabaseHelper = new FavoriteMoviesDatabaseHelper(activity);
         favoriteMovie = new Movie();
 
+        favoriteMovie.setId(id);
         favoriteMovie.setTitle(title);
         favoriteMovie.setReleaseDate(releaseDate);
         favoriteMovie.setPosterPath(posterPath);
