@@ -6,6 +6,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.support.annotation.Nullable;
+import android.text.TextUtils;
 import android.util.Log;
 
 import com.erikriosetiawan.recursivemoviesthree.models.Movie;
@@ -95,7 +96,12 @@ public class FavoriteMoviesDatabaseHelper extends SQLiteOpenHelper {
         if (cursor.moveToFirst()) {
             do {
                 Movie movie = new Movie();
-                movie.setId(Integer.parseInt(cursor.getString(cursor.getColumnIndex(FavoriteDatabaseContract.FavoriteMoviesEntry.COLUMN_ID))));
+                if (!TextUtils.isEmpty(cursor.getString(cursor.getColumnIndex(FavoriteDatabaseContract.FavoriteMoviesEntry.COLUMN_ID))) && TextUtils.isDigitsOnly(cursor.getString(cursor.getColumnIndex(FavoriteDatabaseContract.FavoriteMoviesEntry.COLUMN_ID)))) {
+                    movie.setId(Integer.parseInt(cursor.getString(cursor.getColumnIndex(FavoriteDatabaseContract.FavoriteMoviesEntry.COLUMN_ID))));
+                } else {
+                    movie.setId(0);
+                }
+//                movie.setId(Integer.parseInt(cursor.getString(cursor.getColumnIndex(FavoriteDatabaseContract.FavoriteMoviesEntry.COLUMN_ID))));
                 movie.setTitle(cursor.getString(cursor.getColumnIndex(FavoriteDatabaseContract.FavoriteMoviesEntry.COLUMN_TITLE)));
                 movie.setReleaseDate(cursor.getString(cursor.getColumnIndex(FavoriteDatabaseContract.FavoriteMoviesEntry.COLUMN_RELEASE_DATE)));
                 movie.setPosterPath(cursor.getString(cursor.getColumnIndex(FavoriteDatabaseContract.FavoriteMoviesEntry.COLUMN_POSTER_PATH)));
