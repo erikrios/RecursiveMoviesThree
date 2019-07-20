@@ -9,7 +9,6 @@
     <!-- TODO: Remove or change this placeholder text -->
     <string name="change_language_settings">Change Language Settings</string>
     <string name="nav_favorite">Favorite</string>
-
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="add_favorite">Added to Favorite</string>
+    <string name="removed_favorite">Removed from Favorite</string>
 </resources>

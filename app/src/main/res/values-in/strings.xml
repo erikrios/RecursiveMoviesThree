@@ -9,4 +9,6 @@
     <!-- TODO: Remove or change this placeholder text -->
     <string name="change_language_settings">Ubah Pengaturan Bahasa</string>
     <string name="nav_favorite">Favorit</string>
+    <string name="add_favorite">Ditambahkan ke Favorit</string>
+    <string name="removed_favorite">Dihapus dari Favorit</string>
 </resources>

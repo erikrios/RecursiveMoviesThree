@@ -101,13 +101,13 @@ public class DetailsActivity extends AppCompatActivity {
                             moviesEditor.putBoolean("checked", true);
                             moviesEditor.apply();
                             saveFavoriteMovies(title, releaseDate, posterPath, overview, id);
-                            Snackbar.make(buttonView, "Added to Favorite", Snackbar.LENGTH_SHORT).show();
+                            Snackbar.make(buttonView, title + " " + getResources().getString(R.string.add_favorite), Snackbar.LENGTH_SHORT).show();
                         } else {
                             favoriteMoviesDatabaseHelper = new FavoriteMoviesDatabaseHelper(DetailsActivity.this);
                             favoriteMoviesDatabaseHelper.deleteFavorite(id);
                             moviesEditor.putBoolean("checked", false);
                             moviesEditor.apply();
-                            Snackbar.make(buttonView, "Removed from Favorite", Snackbar.LENGTH_SHORT).show();
+                            Snackbar.make(buttonView, title + " " + getResources().getString(R.string.removed_favorite), Snackbar.LENGTH_SHORT).show();
                         }
                     }
                 });
@@ -145,13 +145,13 @@ public class DetailsActivity extends AppCompatActivity {
                             tvShowsEditor.putBoolean("Checked", true);
                             tvShowsEditor.apply();
                             saveFavoriteTvShows(title, releaseDate, posterPath, overview, id);
-                            Snackbar.make(buttonView, "Added to Favorite", Snackbar.LENGTH_SHORT).show();
+                            Snackbar.make(buttonView,title + " " + getResources().getString(R.string.add_favorite), Snackbar.LENGTH_SHORT).show();
                         } else {
                             favoriteTvShowsDatabaseHelper = new FavoriteTvShowsDatabaseHelper(DetailsActivity.this);
                             favoriteTvShowsDatabaseHelper.deleteFavorite(id);
                             tvShowsEditor.putBoolean("checked", false);
                             tvShowsEditor.apply();
-                            Snackbar.make(buttonView, "Removed from Favorite", Snackbar.LENGTH_SHORT).show();
+                            Snackbar.make(buttonView,title + " " + getResources().getString(R.string.removed_favorite), Snackbar.LENGTH_SHORT).show();
                         }
                     }
                 });
