@@ -1,10 +1,8 @@
 package com.erikriosetiawan.recursivemoviesthree;
 
 import android.app.ProgressDialog;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
-import android.preference.PreferenceManager;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.Button;
@@ -17,6 +15,8 @@ import com.erikriosetiawan.recursivemoviesthree.models.Movie;
 import com.erikriosetiawan.recursivemoviesthree.models.TvShow;
 import com.github.ivbaranov.mfb.MaterialFavoriteButton;
 import com.squareup.picasso.Picasso;
+
+import java.util.List;
 
 public class DetailsActivity extends AppCompatActivity {
 
@@ -35,11 +35,14 @@ public class DetailsActivity extends AppCompatActivity {
 
     int progressStatus;
 
-    private FavoriteMoviesDatabaseHelper favoriteMoviesDatabaseHelper;
+    private static FavoriteMoviesDatabaseHelper favoriteMoviesDatabaseHelper;
     private FavoriteTvShowsDatabaseHelper favoriteTvShowsDatabaseHelper;
-    private Movie favoriteMovie;
-    private TvShow favoriteTvShow;
+    private static Movie favoriteMovie = new Movie();
+    private static TvShow favoriteTvShow = new TvShow();
     private final AppCompatActivity activity = DetailsActivity.this;
+
+    private List<Movie> movies;
+    private List<TvShow> tvShows;
 
     private String title, releaseDate, overview, posterPath;
     private int id;
@@ -57,6 +60,9 @@ public class DetailsActivity extends AppCompatActivity {
         tvOverview = findViewById(R.id.tv_detail_overview);
         progressDialog = new ProgressDialog(DetailsActivity.this);
         btnFavorite = findViewById(R.id.btn_favorite);
+
+        favoriteMoviesDatabaseHelper = new FavoriteMoviesDatabaseHelper(activity);
+        favoriteTvShowsDatabaseHelper = new FavoriteTvShowsDatabaseHelper(activity);
     }
 
     @Override
@@ -86,9 +92,7 @@ public class DetailsActivity extends AppCompatActivity {
                 tvOverview.setText(overview);
                 setActionBar(tvTitle.getText().toString());
 
-                SharedPreferences moviesPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-                final SharedPreferences.Editor moviesEditor = moviesPreferences.edit();
-                if (moviesPreferences.contains("checked") && moviesPreferences.getBoolean("checked", false)) {
+                if (isFavoriteMovieExists(movie)) {
                     btnFavorite.setFavorite(true);
                 } else {
                     btnFavorite.setFavorite(false);
@@ -97,17 +101,15 @@ public class DetailsActivity extends AppCompatActivity {
                 btnFavorite.setOnFavoriteChangeListener(new MaterialFavoriteButton.OnFavoriteChangeListener() {
                     @Override
                     public void onFavoriteChanged(MaterialFavoriteButton buttonView, boolean favorite) {
-                        if (btnFavorite.isFavorite()) {
-                            moviesEditor.putBoolean("checked", true);
-                            moviesEditor.apply();
-                            saveFavoriteMovies(title, releaseDate, posterPath, overview, id);
-                            Snackbar.make(buttonView, title + " " + getResources().getString(R.string.add_favorite), Snackbar.LENGTH_SHORT).show();
-                        } else {
-                            favoriteMoviesDatabaseHelper = new FavoriteMoviesDatabaseHelper(DetailsActivity.this);
+                        if (!favorite) { // Exists in database
                             favoriteMoviesDatabaseHelper.deleteFavorite(id);
-                            moviesEditor.putBoolean("checked", false);
-                            moviesEditor.apply();
+                            btnFavorite.setFavorite(false);
                             Snackbar.make(buttonView, title + " " + getResources().getString(R.string.removed_favorite), Snackbar.LENGTH_SHORT).show();
+                        } else {
+                            saveFavoriteMovies(title, releaseDate, posterPath, overview, id);
+                            btnFavorite.setFavorite(true);
+                            Snackbar.make(buttonView, title + " " + getResources().getString(R.string.add_favorite), Snackbar.LENGTH_SHORT).show();
+
                         }
                     }
                 });
@@ -130,9 +132,7 @@ public class DetailsActivity extends AppCompatActivity {
                 tvOverview.setText(overview);
                 setActionBar(tvTitle.getText().toString());
 
-                SharedPreferences tvShowsPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-                final SharedPreferences.Editor tvShowsEditor = tvShowsPreferences.edit();
-                if (tvShowsPreferences.contains("checked") && tvShowsPreferences.getBoolean("checked", false)) {
+                if (isFavoriteTvShowExists(tvShow)) {
                     btnFavorite.setFavorite(true);
                 } else {
                     btnFavorite.setFavorite(false);
@@ -141,17 +141,14 @@ public class DetailsActivity extends AppCompatActivity {
                 btnFavorite.setOnFavoriteChangeListener(new MaterialFavoriteButton.OnFavoriteChangeListener() {
                     @Override
                     public void onFavoriteChanged(MaterialFavoriteButton buttonView, boolean favorite) {
-                        if (btnFavorite.isFavorite()) {
-                            tvShowsEditor.putBoolean("Checked", true);
-                            tvShowsEditor.apply();
-                            saveFavoriteTvShows(title, releaseDate, posterPath, overview, id);
-                            Snackbar.make(buttonView,title + " " + getResources().getString(R.string.add_favorite), Snackbar.LENGTH_SHORT).show();
-                        } else {
-                            favoriteTvShowsDatabaseHelper = new FavoriteTvShowsDatabaseHelper(DetailsActivity.this);
+                        if (!favorite) {
                             favoriteTvShowsDatabaseHelper.deleteFavorite(id);
-                            tvShowsEditor.putBoolean("checked", false);
-                            tvShowsEditor.apply();
-                            Snackbar.make(buttonView,title + " " + getResources().getString(R.string.removed_favorite), Snackbar.LENGTH_SHORT).show();
+                            btnFavorite.setFavorite(false);
+                            Snackbar.make(buttonView, title + " " + getResources().getString(R.string.removed_favorite), Snackbar.LENGTH_SHORT).show();
+                        } else {
+                            saveFavoriteTvShows(title, releaseDate, posterPath, overview, id);
+                            btnFavorite.setFavorite(true);
+                            Snackbar.make(buttonView, title + " " + getResources().getString(R.string.add_favorite), Snackbar.LENGTH_SHORT).show();
                         }
                     }
                 });
@@ -206,9 +203,6 @@ public class DetailsActivity extends AppCompatActivity {
     }
 
     private void saveFavoriteMovies(String title, String releaseDate, String posterPath, String overview, int id) {
-        favoriteMoviesDatabaseHelper = new FavoriteMoviesDatabaseHelper(activity);
-        favoriteMovie = new Movie();
-
         favoriteMovie.setId(id);
         favoriteMovie.setTitle(title);
         favoriteMovie.setReleaseDate(releaseDate);
@@ -219,9 +213,6 @@ public class DetailsActivity extends AppCompatActivity {
     }
 
     private void saveFavoriteTvShows(String title, String releaseDate, String posterPath, String overview, int id) {
-        favoriteTvShowsDatabaseHelper = new FavoriteTvShowsDatabaseHelper(activity);
-        favoriteTvShow = new TvShow();
-
         favoriteTvShow.setId(id);
         favoriteTvShow.setName(title);
         favoriteTvShow.setFirstAirDate(releaseDate);
@@ -231,12 +222,23 @@ public class DetailsActivity extends AppCompatActivity {
         favoriteTvShowsDatabaseHelper.addFavorite(favoriteTvShow);
     }
 
+    private boolean isFavoriteMovieExists(Movie movieList) {
+        movies = favoriteMoviesDatabaseHelper.getAllFavorite();
+        for (Movie movie : movies) {
+            if (movie.getId().equals(movieList.getId())) {
+                return true;
+            }
+        }
+        return false;
+    }
 
-//    private void progressBarStatus(boolean status) {
-//        if (status) {
-//            progressDialog.setVisibility(View.VISIBLE);
-//        } else {
-//            progressDialog.setVisibility(View.INVISIBLE);
-//        }
-//    }
+    private boolean isFavoriteTvShowExists(TvShow tvShowList) {
+        tvShows = favoriteTvShowsDatabaseHelper.getAllFavorite();
+        for (TvShow tvShow : tvShows) {
+            if (tvShow.getId().equals(tvShowList.getId())) {
+                return true;
+            }
+        }
+        return false;
+    }
 }
