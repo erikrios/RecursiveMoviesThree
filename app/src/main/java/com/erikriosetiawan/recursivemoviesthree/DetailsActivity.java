@@ -1,15 +1,20 @@
 package com.erikriosetiawan.recursivemoviesthree;
 
 import android.app.ProgressDialog;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.erikriosetiawan.recursivemoviesthree.db.FavoriteDatabaseContract;
+import com.erikriosetiawan.recursivemoviesthree.db.FavoriteMoviesDatabaseHelper;
 import com.erikriosetiawan.recursivemoviesthree.models.Movie;
 import com.erikriosetiawan.recursivemoviesthree.models.TvShow;
+import com.github.ivbaranov.mfb.MaterialFavoriteButton;
 import com.squareup.picasso.Picasso;
 
 public class DetailsActivity extends AppCompatActivity {
@@ -25,8 +30,13 @@ public class DetailsActivity extends AppCompatActivity {
     private Button btnVoteAverage;
     private TextView tvOverview;
     private ProgressDialog progressDialog;
+    private MaterialFavoriteButton btnFavorite;
 
     int progressStatus;
+
+    private FavoriteMoviesDatabaseHelper favoriteMoviesDatabaseHelper;
+    private Movie favoriteMovie;
+    private final AppCompatActivity activity = DetailsActivity.this;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,6 +50,8 @@ public class DetailsActivity extends AppCompatActivity {
         btnVoteAverage = findViewById(R.id.btn_detail_vote_average);
         tvOverview = findViewById(R.id.tv_detail_overview);
         progressDialog = new ProgressDialog(DetailsActivity.this);
+        btnFavorite = findViewById(R.id.btn_favorite);
+
     }
 
     @Override
@@ -54,8 +66,10 @@ public class DetailsActivity extends AppCompatActivity {
 
             case MOVIE_KEY:
                 Movie movie = getIntent().getParcelableExtra(MOVIE_KEY);
+                final String posterPath = movie.getPosterPath();
+                final int movieId = movie.getId();
                 Picasso.get()
-                        .load("https://image.tmdb.org/t/p/w185" + movie.getPosterPath())
+                        .load("https://image.tmdb.org/t/p/w185" + posterPath)
                         .into(imgPoster);
                 tvTitle.setText(movie.getTitle());
                 btnReleaseDate.setText(movie.getReleaseDate());
@@ -63,6 +77,30 @@ public class DetailsActivity extends AppCompatActivity {
                 btnVoteAverage.setText(String.valueOf(movie.getVoteAverage()));
                 tvOverview.setText(movie.getOverview());
                 setActionBar(tvTitle.getText().toString());
+
+                btnFavorite.setOnFavoriteChangeListener(new MaterialFavoriteButton.OnFavoriteChangeListener() {
+                    @Override
+                    public void onFavoriteChanged(MaterialFavoriteButton buttonView, boolean favorite) {
+                        if (favorite) {
+                            SharedPreferences.Editor editor = getSharedPreferences("com.erikriosetiawan.recursivemoviesthree.DetailsActivity", MODE_PRIVATE).edit();
+                            editor.putBoolean("Favorite Added", true);
+                            editor.apply();
+                            String title = tvTitle.getText().toString();
+                            String releaseDate = btnReleaseDate.getText().toString();
+                            String overview = tvOverview.getText().toString();
+                            saveFavoriteMovies(title, releaseDate, "https://image.tmdb.org/t/p/w185" + posterPath, overview);
+                            Snackbar.make(buttonView, "Added to Favorite", Snackbar.LENGTH_SHORT).show();
+                        } else {
+                            favoriteMoviesDatabaseHelper = new FavoriteMoviesDatabaseHelper(DetailsActivity.this);
+                            favoriteMoviesDatabaseHelper.deleteFavorite(movieId);
+
+                            SharedPreferences.Editor editor = getSharedPreferences("com.erikriosetiawan.recursivemoviesthree.DetailsActivity", MODE_PRIVATE).edit();
+                            editor.putBoolean("Favorite Removed", false);
+                            editor.apply();
+                            Snackbar.make(buttonView, "Removed from Favorite", Snackbar.LENGTH_SHORT).show();
+                        }
+                    }
+                });
                 break;
 
             case TV_SHOW_KEY:
@@ -124,6 +162,18 @@ public class DetailsActivity extends AppCompatActivity {
         };
         Thread run = new Thread(runnableMain);
         run.start();
+    }
+
+    private void saveFavoriteMovies(String title, String releaseDate, String posterPath, String overview) {
+        favoriteMoviesDatabaseHelper = new FavoriteMoviesDatabaseHelper(activity);
+        favoriteMovie = new Movie();
+
+        favoriteMovie.setTitle(title);
+        favoriteMovie.setReleaseDate(releaseDate);
+        favoriteMovie.setPosterPath(posterPath);
+        favoriteMovie.setOverview(overview);
+
+        favoriteMoviesDatabaseHelper.addFavorite(favoriteMovie);
     }
 
 

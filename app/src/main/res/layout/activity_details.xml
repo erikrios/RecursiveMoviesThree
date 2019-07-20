@@ -74,6 +74,16 @@
             app:layout_constraintTop_toBottomOf="@id/btn_detail_release_date"
             tools:text="956" />
 
+        <com.github.ivbaranov.mfb.MaterialFavoriteButton
+            android:id="@+id/btn_favorite"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:background="@drawable/details_bg"
+            app:layout_constraintBottom_toTopOf="@id/tv_detail_overview"
+            app:layout_constraintLeft_toRightOf="@id/btn_detail_vote_average"
+            app:layout_constraintRight_toLeftOf="@id/btn_detail_vote_count"
+            app:layout_constraintTop_toBottomOf="@id/btn_detail_release_date" />
+
         <Button
             android:id="@+id/btn_detail_vote_average"
             android:layout_width="0dp"

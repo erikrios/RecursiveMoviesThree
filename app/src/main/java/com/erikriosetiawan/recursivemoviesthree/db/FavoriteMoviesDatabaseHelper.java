@@ -40,6 +40,7 @@ public class FavoriteMoviesDatabaseHelper extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
         final String SQL_CREATE_FAVORITE_MOVIES_TABLE = "CREATE TABLE " + FavoriteDatabaseContract.FavoriteMoviesEntry.TABLE_NAME + " (" +
                 FavoriteDatabaseContract.FavoriteMoviesEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT," +
+                FavoriteDatabaseContract.FavoriteMoviesEntry.COLUMN_ID + " INTEGER, " +
                 FavoriteDatabaseContract.FavoriteMoviesEntry.COLUMN_TITLE + " TEXT NOT NULL, " +
                 FavoriteDatabaseContract.FavoriteMoviesEntry.COLUMN_POSTER_PATH + " TEXT NOT NULL, " +
                 FavoriteDatabaseContract.FavoriteMoviesEntry.COLUMN_RELEASE_DATE + " TEXT NOT NULL, " +
@@ -58,23 +59,27 @@ public class FavoriteMoviesDatabaseHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
 
         ContentValues values = new ContentValues();
+        values.put(FavoriteDatabaseContract.FavoriteMoviesEntry.COLUMN_ID, movie.getId());
         values.put(FavoriteDatabaseContract.FavoriteMoviesEntry.COLUMN_TITLE, movie.getTitle());
         values.put(FavoriteDatabaseContract.FavoriteMoviesEntry.COLUMN_RELEASE_DATE, movie.getReleaseDate());
         values.put(FavoriteDatabaseContract.FavoriteMoviesEntry.COLUMN_POSTER_PATH, movie.getPosterPath());
         values.put(FavoriteDatabaseContract.FavoriteMoviesEntry.COLUMN_OVERVIEW, movie.getOverview());
 
         db.insert(FavoriteDatabaseContract.FavoriteMoviesEntry.TABLE_NAME, null, values);
+        Log.d(LOG_TAG, "Add to favorite success");
         db.close();
     }
 
     public void deleteFavorite(int id) {
         SQLiteDatabase db = this.getWritableDatabase();
-        db.delete(FavoriteDatabaseContract.FavoriteMoviesEntry.TABLE_NAME, FavoriteDatabaseContract.FavoriteMoviesEntry._ID + " = '" + id + "'", null);
+        db.delete(FavoriteDatabaseContract.FavoriteMoviesEntry.TABLE_NAME, FavoriteDatabaseContract.FavoriteMoviesEntry.COLUMN_ID + "=" + id, null);
+        Log.d(LOG_TAG, "Delete favorite success");
     }
 
     public List<Movie> getAllFavorite() {
         String[] columns = {
                 FavoriteDatabaseContract.FavoriteMoviesEntry._ID,
+                FavoriteDatabaseContract.FavoriteMoviesEntry.COLUMN_ID,
                 FavoriteDatabaseContract.FavoriteMoviesEntry.COLUMN_TITLE,
                 FavoriteDatabaseContract.FavoriteMoviesEntry.COLUMN_RELEASE_DATE,
                 FavoriteDatabaseContract.FavoriteMoviesEntry.COLUMN_POSTER_PATH,
@@ -90,6 +95,7 @@ public class FavoriteMoviesDatabaseHelper extends SQLiteOpenHelper {
         if (cursor.moveToFirst()) {
             do {
                 Movie movie = new Movie();
+                movie.setId(Integer.parseInt(cursor.getString(cursor.getColumnIndex(FavoriteDatabaseContract.FavoriteMoviesEntry.COLUMN_ID))));
                 movie.setTitle(cursor.getString(cursor.getColumnIndex(FavoriteDatabaseContract.FavoriteMoviesEntry.COLUMN_TITLE)));
                 movie.setReleaseDate(cursor.getString(cursor.getColumnIndex(FavoriteDatabaseContract.FavoriteMoviesEntry.COLUMN_RELEASE_DATE)));
                 movie.setPosterPath(cursor.getString(cursor.getColumnIndex(FavoriteDatabaseContract.FavoriteMoviesEntry.COLUMN_POSTER_PATH)));
