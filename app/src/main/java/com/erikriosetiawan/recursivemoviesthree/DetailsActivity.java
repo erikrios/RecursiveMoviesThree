@@ -4,6 +4,7 @@ import android.app.ProgressDialog;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
+import android.preference.PreferenceManager;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.Button;
@@ -78,12 +79,19 @@ public class DetailsActivity extends AppCompatActivity {
                 tvOverview.setText(movie.getOverview());
                 setActionBar(tvTitle.getText().toString());
 
+                SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
+                final SharedPreferences.Editor editor = preferences.edit();
+                if (preferences.contains("checked") && preferences.getBoolean("checked", false) == true) {
+                    btnFavorite.setFavorite(true);
+                } else {
+                    btnFavorite.setFavorite(false);
+                }
+
                 btnFavorite.setOnFavoriteChangeListener(new MaterialFavoriteButton.OnFavoriteChangeListener() {
                     @Override
                     public void onFavoriteChanged(MaterialFavoriteButton buttonView, boolean favorite) {
-                        if (favorite) {
-                            SharedPreferences.Editor editor = getSharedPreferences("com.erikriosetiawan.recursivemoviesthree.DetailsActivity", MODE_PRIVATE).edit();
-                            editor.putBoolean("Favorite Added", true);
+                        if (btnFavorite.isFavorite()) {
+                            editor.putBoolean("checked", true);
                             editor.apply();
                             String title = tvTitle.getText().toString();
                             String releaseDate = btnReleaseDate.getText().toString();
@@ -93,9 +101,7 @@ public class DetailsActivity extends AppCompatActivity {
                         } else {
                             favoriteMoviesDatabaseHelper = new FavoriteMoviesDatabaseHelper(DetailsActivity.this);
                             favoriteMoviesDatabaseHelper.deleteFavorite(movieId);
-
-                            SharedPreferences.Editor editor = getSharedPreferences("com.erikriosetiawan.recursivemoviesthree.DetailsActivity", MODE_PRIVATE).edit();
-                            editor.putBoolean("Favorite Removed", false);
+                            editor.putBoolean("checked", false);
                             editor.apply();
                             Snackbar.make(buttonView, "Removed from Favorite", Snackbar.LENGTH_SHORT).show();
                         }
