@@ -12,7 +12,7 @@
         android:layout_height="wrap_content">
 
         <ImageView
-            android:id="@+id/img_detail_poster"
+            android:id="@+id/img_favorite_detail_poster"
             android:layout_width="match_parent"
             android:layout_height="300dp"
             android:layout_gravity="center_horizontal"
@@ -27,7 +27,7 @@
 
 
         <TextView
-            android:id="@+id/tv_detail_title"
+            android:id="@+id/tv_favorite_detail_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/activity_horizontal_margin"
@@ -37,17 +37,17 @@
             android:textSize="25sp"
             android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="@id/img_detail_poster"
+            app:layout_constraintEnd_toEndOf="@id/img_favorite_detail_poster"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/img_detail_poster"
+            app:layout_constraintTop_toBottomOf="@+id/img_favorite_detail_poster"
             app:layout_constraintVertical_bias="0.0"
             tools:text="@string/app_name" />
 
 
         <Button
-            android:id="@+id/btn_detail_release_date"
+            android:id="@+id/btn_favorite_detail_release_date"
             android:layout_width="300dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
@@ -58,7 +58,7 @@
             app:layout_constraintBottom_toTopOf="@id/btn_detail_vote_count"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/tv_detail_title"
+            app:layout_constraintTop_toBottomOf="@id/tv_favorite_detail_title"
             tools:text="2019 - 12 - 8" />
 
         <Button
@@ -68,10 +68,10 @@
             android:background="@drawable/details_bg"
             android:drawableTop="@drawable/ic_supervisor_account_black_24dp"
             android:textStyle="bold"
-            app:layout_constraintBottom_toTopOf="@id/tv_detail_overview"
+            app:layout_constraintBottom_toTopOf="@id/tv_favorite_detail_overview"
             app:layout_constraintRight_toLeftOf="@id/btn_detail_vote_average"
-            app:layout_constraintStart_toStartOf="@id/btn_detail_release_date"
-            app:layout_constraintTop_toBottomOf="@id/btn_detail_release_date"
+            app:layout_constraintStart_toStartOf="@id/btn_favorite_detail_release_date"
+            app:layout_constraintTop_toBottomOf="@id/btn_favorite_detail_release_date"
             tools:text="956" />
 
         <com.github.ivbaranov.mfb.MaterialFavoriteButton
@@ -79,10 +79,10 @@
             android:layout_width="50dp"
             android:layout_height="50dp"
             android:background="@drawable/details_bg"
-            app:layout_constraintBottom_toTopOf="@id/tv_detail_overview"
+            app:layout_constraintBottom_toTopOf="@id/tv_favorite_detail_overview"
             app:layout_constraintLeft_toRightOf="@id/btn_detail_vote_average"
             app:layout_constraintRight_toLeftOf="@id/btn_detail_vote_count"
-            app:layout_constraintTop_toBottomOf="@id/btn_detail_release_date" />
+            app:layout_constraintTop_toBottomOf="@id/btn_favorite_detail_release_date" />
 
         <Button
             android:id="@+id/btn_detail_vote_average"
@@ -92,14 +92,14 @@
             android:background="@drawable/details_bg"
             android:drawableTop="@drawable/ic_star_black_24dp"
             android:textStyle="bold"
-            app:layout_constraintBottom_toTopOf="@id/tv_detail_overview"
-            app:layout_constraintEnd_toEndOf="@id/btn_detail_release_date"
+            app:layout_constraintBottom_toTopOf="@id/tv_favorite_detail_overview"
+            app:layout_constraintEnd_toEndOf="@id/btn_favorite_detail_release_date"
             app:layout_constraintLeft_toRightOf="@id/btn_detail_vote_count"
-            app:layout_constraintTop_toBottomOf="@id/btn_detail_release_date"
+            app:layout_constraintTop_toBottomOf="@id/btn_favorite_detail_release_date"
             tools:text="9.5" />
 
         <TextView
-            android:id="@+id/tv_detail_overview"
+            android:id="@+id/tv_favorite_detail_overview"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/activity_horizontal_margin"

@@ -1,6 +1,7 @@
 package com.erikriosetiawan.recursivemoviesthree.adapters;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -9,6 +10,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.erikriosetiawan.recursivemoviesthree.FavoriteDetailsActivity;
 import com.erikriosetiawan.recursivemoviesthree.R;
 import com.erikriosetiawan.recursivemoviesthree.models.Movie;
 import com.squareup.picasso.Picasso;
@@ -57,6 +59,19 @@ public class FavoriteMovieAdapter extends RecyclerView.Adapter<FavoriteMovieAdap
         Picasso.get()
                 .load("https://image.tmdb.org/t/p/w185" + getMovies().get(i).getPosterPath())
                 .into(viewHolder.imgViewPoster);
+
+        viewHolder.itemView.setOnClickListener(new CustomOnItemClickListener(i, new CustomOnItemClickListener.OnItemClickCallback() {
+            @Override
+            public void onItemClicked(View view, int position) {
+                Intent dataIntent = new Intent(context, FavoriteDetailsActivity.class);
+                dataIntent.putExtra(FavoriteDetailsActivity.FAVORITE_MOVIE_POSTER_KEY, getMovies().get(position).getPosterPath());
+                dataIntent.putExtra(FavoriteDetailsActivity.FAVORITE_MOVIE_TITLE_KEY, getMovies().get(position).getTitle());
+                dataIntent.putExtra(FavoriteDetailsActivity.FAVORITE_MOVIE_RELEASE_DATE_KEY, getMovies().get(position).getReleaseDate());
+                dataIntent.putExtra(FavoriteDetailsActivity.FAVORITE_MOVIE_OVERVIEW_KEY, getMovies().get(position).getOverview());
+                dataIntent.putExtra(FavoriteDetailsActivity.FAVORITE_KEY, FavoriteDetailsActivity.FAVORITE_MOVIE_KEY);
+                context.startActivity(dataIntent);
+            }
+        }));
     }
 
     @Override

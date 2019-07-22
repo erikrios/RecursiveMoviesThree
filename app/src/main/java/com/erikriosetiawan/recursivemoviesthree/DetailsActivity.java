@@ -1,8 +1,6 @@
 package com.erikriosetiawan.recursivemoviesthree;
 
-import android.app.ProgressDialog;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.Button;
@@ -30,10 +28,7 @@ public class DetailsActivity extends AppCompatActivity {
     private Button btnVoteCount;
     private Button btnVoteAverage;
     private TextView tvOverview;
-    private ProgressDialog progressDialog;
     private MaterialFavoriteButton btnFavorite;
-
-    int progressStatus;
 
     private static FavoriteMoviesDatabaseHelper favoriteMoviesDatabaseHelper;
     private FavoriteTvShowsDatabaseHelper favoriteTvShowsDatabaseHelper;
@@ -52,13 +47,12 @@ public class DetailsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_details);
 
-        imgPoster = findViewById(R.id.img_detail_poster);
-        tvTitle = findViewById(R.id.tv_detail_title);
-        btnReleaseDate = findViewById(R.id.btn_detail_release_date);
+        imgPoster = findViewById(R.id.img_favorite_detail_poster);
+        tvTitle = findViewById(R.id.tv_favorite_detail_title);
+        btnReleaseDate = findViewById(R.id.btn_favorite_detail_release_date);
         btnVoteCount = findViewById(R.id.btn_detail_vote_count);
         btnVoteAverage = findViewById(R.id.btn_detail_vote_average);
-        tvOverview = findViewById(R.id.tv_detail_overview);
-        progressDialog = new ProgressDialog(DetailsActivity.this);
+        tvOverview = findViewById(R.id.tv_favorite_detail_overview);
         btnFavorite = findViewById(R.id.btn_favorite);
 
         favoriteMoviesDatabaseHelper = new FavoriteMoviesDatabaseHelper(activity);
@@ -68,8 +62,6 @@ public class DetailsActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-
-        showProgress();
 
         String key = getIntent().getStringExtra(KEY);
 
@@ -160,46 +152,6 @@ public class DetailsActivity extends AppCompatActivity {
         if (getSupportActionBar() != null) {
             getSupportActionBar().setTitle(title);
         }
-    }
-
-    private void showProgress() {
-        progressDialog = new ProgressDialog(DetailsActivity.this);
-        progressDialog.setMax(100);
-        progressDialog.setMessage(getResources().getString(R.string.load_data));
-        progressDialog.setTitle(getResources().getString(R.string.progress_title));
-        progressDialog.setCancelable(false);
-        progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
-        progressDialog.show();
-
-        progressStatus = 0;
-        final Handler progressHandler = new Handler();
-
-        final Runnable runnableFinish = new Runnable() {
-            @Override
-            public void run() {
-                progressDialog.setProgress(progressStatus);
-                if (progressStatus >= 100) {
-                    progressDialog.dismiss();
-                }
-            }
-        };
-
-        Runnable runnableMain = new Runnable() {
-            @Override
-            public void run() {
-                while (progressStatus < 100) {
-                    progressStatus += 10;
-                    try {
-                        Thread.sleep(500);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                    progressHandler.post(runnableFinish);
-                }
-            }
-        };
-        Thread run = new Thread(runnableMain);
-        run.start();
     }
 
     private void saveFavoriteMovies(String title, String releaseDate, String posterPath, String overview, int id) {
